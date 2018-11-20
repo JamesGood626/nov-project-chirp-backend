@@ -6,18 +6,17 @@ const morgan = require("morgan");
 
 const app = express();
 const userRoutes = require("./api/User/routes/userRoutes");
-console.log("USER ROUTES: ", userRoutes);
-// const chirp = require("./api/Chirp/routes/chirpRoutes");
-// const user = require("./api/User/routes/userRoutes");
-
+const chirpRoutes = require("./api/Chirp/routes/chirpRoutes");
 //Middleware setup
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(morgan("tiny"));
 
-const MONGO_URI =
+const LOCAL_URI =
   process.env.NODE_ENV === "test"
     ? `mongodb://localhost:27017/${process.env.TEST_SUITE}`
-    : process.env.URL;
+    : `mongodb://localhost:27017/chirp`;
+const MONGO_URI = process.env.NODE_ENV === "prod" ? process.env.URL : LOCAL_URI;
 
 //connecting to MongDB
 mongoose
@@ -30,5 +29,5 @@ mongoose
 
 // Use Routes
 userRoutes(app);
-
+chirpRoutes(app);
 module.exports = app;

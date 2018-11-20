@@ -4,7 +4,10 @@ const createUser = async input => {
   const user = new User(input);
   return await user.save();
 };
-
+const getAllUsers = async input => {
+  return await User.find();
+};
 module.exports = {
-  createUser: createUser
+  createUser,
+  getAllUsers
 };

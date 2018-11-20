@@ -5,15 +5,16 @@ const Schema = mongoose.Schema;
 const ChirpSchema = new Schema({
   message: String,
   deleted: Boolean,
-  likes: Number,
-  hates: Number,
-  favorites: Number,
+  likes: { type: Number, default: 0 },
+  hates: { type: Number, default: 0 },
+  favorites: { type: Number, default: 0 },
   created_at: { type: Date, default: Date.now },
-  user: {
+  /*user: {
     type: Schema.Types.ObjectId,
     ref: "User",
     required: true
-  }
+  }*/
+  username: String
 });
 
 const Chirp = mongoose.models.Chirp || mongoose.model("Chirp", ChirpSchema);
