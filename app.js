@@ -17,9 +17,7 @@ mongoose.connect('mongodb://localhost:27017/test', { useNewUrlParser: true})
 
 const port = process.env.PORT || 27017;   
 app.listen(port, () => console.log(`Mongoose's are running around on port ${port}`))
-   
-   
-   
+
 
 
 
