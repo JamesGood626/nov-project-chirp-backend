@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 //User Schema
 const mongoose = require("mongoose");
 
@@ -10,6 +8,5 @@ const UserSchema = new Schema({
     username: String
 });
 
-
 module.exports = { User: mongoose.model("User", UserSchema)};
->>>>>>> Stashed changes
+
