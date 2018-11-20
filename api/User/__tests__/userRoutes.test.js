@@ -1,7 +1,19 @@
 process.env.TEST_SUITE = "user-routes-test";
 const app = require("../../../app");
 const request = require("supertest");
-const { postRequest } = require("../../testHelpers");
+const User = require("../model/user");
+const { createUser } = require("../service");
+const {
+  postRequest,
+  getRequest,
+  dropCollection,
+  parseJson
+} = require("../../testHelpers");
+
+const userInput = {
+  username: "test username",
+  email: "email"
+};
 
 describe("Hitting the userRoutes, a User may", () => {
   let server;
@@ -13,18 +25,27 @@ describe("Hitting the userRoutes, a User may", () => {
     done();
   });
 
+  beforeEach(async done => {
+    await dropCollection(User);
+    done();
+  });
+
   afterAll(async done => {
     await server.close(done);
   });
 
   test("create a user", async done => {
-    const userInput = {
-      username: "test username",
-      email: "email"
-    };
     const response = await postRequest(createdRequest, "/user", userInput);
-    const parsed = JSON.parse(response.text);
-    expect(parsed.username).toBe("Failed");
+    const parsed = parseJson(response.text);
+    expect(parsed.username).toBe("test username");
+    done();
+  });
+
+  test("get all users", async done => {
+    await createUser(userInput);
+    const response = await getRequest(createdRequest, "/users");
+    const parsed = parseJson(response.text);
+    expect(parsed.length).toEqual(0);
     done();
   });
 });
