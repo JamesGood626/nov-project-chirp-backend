@@ -3,13 +3,19 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 const ChirpSchema = new Schema({
-    userId: Number,   //Eh?
-    message: String,
-    deleted: Boolean,
-    likes: Number,
-    hates: Number, 
-    favorites: Number,
-    created_at: { type: Date, default: Date.now }
+  message: String,
+  deleted: Boolean,
+  likes: Number,
+  hates: Number,
+  favorites: Number,
+  created_at: { type: Date, default: Date.now },
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+    required: true
+  }
 });
 
-module.exports = {Chirp: mongoose.model("Chirp", ChirpSchema)};
+const Chirp = mongoose.models.Chirp || mongoose.model("Chirp", ChirpSchema);
+
+module.exports = Chirp;
