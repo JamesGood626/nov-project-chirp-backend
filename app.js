@@ -11,9 +11,12 @@ const MONGO_URI =
     ? `${BASE_URI}/${process.env.TEST_SUITE}`
     : `${BASE_URI}/chirp_test`;
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
 
+//Middleware setup
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false}));
+
+//connecting to MongDB
 mongoose
   .connect(
     MONGO_URI,
@@ -22,7 +25,9 @@ mongoose
   .then(() => console.log("Mongo is Running"))
   .catch(err => console.log(err));
 
-const port = process.env.PORT || 27017;
-app.listen(port, () =>
-  console.log(`Mongoose's are running around on port ${port}`)
-);
+
+
+//Express App
+const port = process.env.PORT || 27017;   
+app.listen(port, () => console.log(`Mongoose's are running around on port ${port}`))
+
