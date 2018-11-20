@@ -5,19 +5,19 @@ const cors = require("cors");
 const morgan = require("morgan");
 
 const app = express();
-
-const chirp = require("./api/Chirp/routes/chirpRoutes");
-const user = require("./api/User/routes/userRoutes");
+const userRoutes = require("./api/User/routes/userRoutes");
+console.log("USER ROUTES: ", userRoutes);
+// const chirp = require("./api/Chirp/routes/chirpRoutes");
+// const user = require("./api/User/routes/userRoutes");
 
 //Middleware setup
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 
-const BASE_URI = "mongodb://localhost:27017/test";
 const MONGO_URI =
   process.env.NODE_ENV === "test"
-    ? `${BASE_URI}/${process.env.TEST_SUITE}`
-    : `${BASE_URI}/chirp_test`;
+    ? `mongodb://localhost:27017/${process.env.TEST_SUITE}`
+    : process.env.URL;
 
 //connecting to MongDB
 mongoose
@@ -29,13 +29,6 @@ mongoose
   .catch(err => console.log(err));
 
 // Use Routes
-app.use("/api/Chirp/routes/chirpRoutes", chirp);
-app.use("/api/User/routes/userRoutes", user);
+userRoutes(app);
 
-//Express App
-const port = process.env.PORT || 27017;
-app.listen(port, () =>
-  console.log(`Mongoose's are running around on port ${port}`)
-);
-
-module.exports = App;
+module.exports = app;

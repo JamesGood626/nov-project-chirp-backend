@@ -3,10 +3,10 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 const UserSchema = new Schema({
-    userId: Number,
-    email: String,
-    username: String
+  email: String,
+  username: String
 });
 
-module.exports = { User: mongoose.model("User", UserSchema)};
+const User = mongoose.models.User || mongoose.model("User", UserSchema);
 
+module.exports = User;
