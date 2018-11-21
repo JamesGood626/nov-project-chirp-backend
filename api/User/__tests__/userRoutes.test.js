@@ -11,7 +11,7 @@ const {
 } = require("../../testHelpers");
 
 const userInput = {
-  username: "test username",
+  username: "Sally",
   email: "email"
 };
 
@@ -37,7 +37,7 @@ describe("Hitting the userRoutes, a User may", () => {
   test("create a user", async done => {
     const response = await postRequest(createdRequest, "/user", userInput);
     const parsed = parseJson(response.text);
-    expect(parsed.username).toBe("test username");
+    expect(parsed.username).toBe("Sally");
     done();
   });
 
