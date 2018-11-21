@@ -7,25 +7,24 @@ const app = express();
 
 //Middleware setup
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false}));
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(morgan("tiny"));
+
+const DB_NAME = process.env.TEST_SUITE || "chirp";
+
+const LOCAL_URI = `mongodb://localhost:27017/`;
+const MONGO_URI = process.env.NODE_ENV === "prod" ? process.env.URL : LOCAL_URI;
 
 //connecting to MongDB
-mongoose.connect('mongodb://localhost:27017/test', { useNewUrlParser: true})
-    .then(() => console.log("Mongo is Running"))
-    .catch(err => console.log(err));
+mongoose
+  .connect(
+    MONGO_URI,
+    { dbName: DB_NAME, useNewUrlParser: true }
+  )
+  .then(() => console.log("Mongo is Running"))
+  .catch(err => console.log(err));
 
-//Routes
-app.use("/api/Chirp/")
-
-
-
-//Express App
-const port = process.env.PORT || 27017;   
-app.listen(port, () => console.log(`Mongoose's are running around on port ${port}`))
-
-
-
-
-
-
-
+// Use Routes
+userRoutes(app);
+chirpRoutes(app);
+module.exports = app;
