@@ -45,7 +45,7 @@ describe("Hitting the userRoutes, a User may", () => {
     await createUser(userInput);
     const response = await getRequest(createdRequest, "/users");
     const parsed = parseJson(response.text);
-    expect(parsed.length).toEqual(0);
+    expect(parsed.length).toEqual(1);
     done();
   });
 });

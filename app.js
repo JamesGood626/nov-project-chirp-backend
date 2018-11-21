@@ -1,10 +1,11 @@
-const mongoose = require('mongoose');
-const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const morgan = require('morgan');
+const mongoose = require("mongoose");
+const express = require("express");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const morgan = require("morgan");
 const app = express();
-
+const userRoutes = require("./api/User/routes/userRoutes");
+const chirpRoutes = require("./api/Chirp/routes/chirpRoutes");
 //Middleware setup
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
