@@ -9,6 +9,8 @@ const getAllChirps = async () => {
   return await Chirp.find();
 };
 
+const 
+
 module.exports = {
   createChirp,
   getAllChirps

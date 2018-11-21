@@ -13,6 +13,7 @@ const { createChirp, getAllChirps } = require("../service");
 const chirpRoutes = app => {
   //return all chirps
   app.get("/chirp", async (req, res) => {
+
     res.json(await getAllChirps());
   });
 
@@ -20,6 +21,25 @@ const chirpRoutes = app => {
   app.post("/chirp", async (req, res) => {
     res.json(await createChirp(req.body));
   });
+
+  // chirp "like" route
+  app.put('/chirp/like/:chirpId', async (req, res) => {
+    // chirpId will be available on req.params
+  });
+
+   // chirp "hate" route
+  app.put('/chirp/hate/:chirpId', async (req, res) => {
+    
+  });
+
+  //chirp "favorite" route
+  app.put('/chirp/favorite/:chirpId', async (req, res) => {
+    
+  });
+
 };
+
+
+
 
 module.exports = chirpRoutes;
