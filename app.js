@@ -6,6 +6,7 @@ const morgan = require("morgan");
 const app = express();
 const userRoutes = require("./api/User/routes/userRoutes");
 const chirpRoutes = require("./api/Chirp/routes/chirpRoutes");
+const reactionRoutes = require("./api/Reaction/routes/reactionRoutes");
 
 //Middleware setup
 app.use(bodyParser.json());
@@ -29,4 +30,5 @@ mongoose
 // Use Routes
 userRoutes(app);
 chirpRoutes(app);
+reactionRoutes(app);
 module.exports = app;

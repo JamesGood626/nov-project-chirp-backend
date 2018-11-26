@@ -13,6 +13,7 @@ const postRequest = async (app, route, input) => {
 
 const putRequest = async (app, route, input) => {
   const response = await app.put(route).send(input);
+  console.log("PUT REQUEST RESPONSE: ", response.body);
   return response;
 };
 
