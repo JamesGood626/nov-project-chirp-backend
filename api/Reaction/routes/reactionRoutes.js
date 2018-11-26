@@ -1,7 +1,7 @@
 const { lookUpReaction } = require("../service");
 const LikeReaction = require("../model/likeReaction");
 const HateReaction = require("../model/hateReaction");
-const FavoriteReaction = require("../model/FavoriteReaction");
+const FavoriteReaction = require("../model/favoriteReaction");
 const {
   SUCCESS,
   NO_CONTENT,
