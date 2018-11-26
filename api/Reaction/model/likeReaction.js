@@ -2,7 +2,7 @@
 const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
-const likeSchema = new Schema({
+const LikeSchema = new Schema({
   userUuid: {
     type: String,
     required: true
@@ -13,5 +13,7 @@ const likeSchema = new Schema({
   }
 });
 
-const likeReaction =
-  mongoose.models.Chirp || mongoose.model("Chirp", ChirpSchema);
+const LikeReaction =
+  mongoose.models.LikeReaction || mongoose.model("LikeReaction", LikeSchema);
+
+module.exports = LikeReaction;

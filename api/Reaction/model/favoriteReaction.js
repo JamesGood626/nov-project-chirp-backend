@@ -2,7 +2,7 @@
 const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
-const favoriteSchema = new Schema({
+const FavoriteSchema = new Schema({
   userUuid: {
     type: String,
     required: true
@@ -14,4 +14,6 @@ const favoriteSchema = new Schema({
 });
 
 const FavoriteReaction =
-  mongoose.models.Chirp || mongoose.model("Chirp", ChirpSchema);
+  mongoose.models.FavoriteReaction ||
+  mongoose.model("FavoriteReaction", FavoriteSchema);
+module.exports = FavoriteReaction;

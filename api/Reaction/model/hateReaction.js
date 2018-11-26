@@ -2,7 +2,7 @@
 const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
-const hateSchema = new Schema({
+const HateSchema = new Schema({
   userUuid: {
     type: String,
     required: true
@@ -14,4 +14,6 @@ const hateSchema = new Schema({
 });
 
 const HateReaction =
-  mongoose.models.Chirp || mongoose.model("Chirp", ChirpSchema);
+  mongoose.models.HateReaction || mongoose.model("HateReaction", HateSchema);
+
+module.exports = HateReaction;
