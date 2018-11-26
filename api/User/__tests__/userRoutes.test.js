@@ -51,7 +51,7 @@ describe("Hitting the userRoutes, a User may", () => {
     done();
   });
 
-  test("receive error messages from bad user input when creating a user.", async done => {
+  test("receive error message from bad user input when creating a user.", async done => {
     const response = await postRequest(createdRequest, "/user", badUserInput);
     const { param, msg, value } = response.body.errors[0];
     expect(response.status).toBe(UNPROCESSABLE_ENTITY);
