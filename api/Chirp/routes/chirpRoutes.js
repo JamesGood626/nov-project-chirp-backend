@@ -1,5 +1,11 @@
+const { validationResult } = require("express-validator/check");
 const { createChirp, deleteChirp, getAllChirps } = require("../service");
-// const router = express.Router();
+const checkChirpInputs = require("../validation");
+const {
+  NO_CONTENT,
+  UNPROCESSABLE_ENTITY,
+  INTERNAL_SERVER_ERROR
+} = require("../../StatusCodeConstants");
 
 // Load Chirp model
 // const Chirp = require("../model/chirp");
@@ -17,7 +23,11 @@ const chirpRoutes = app => {
   });
 
   //create new chirp
-  app.post("/chirp", async (req, res) => {
+  app.post("/chirp", checkChirpInputs, async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(UNPROCESSABLE_ENTITY).json({ errors: errors.array() });
+    }
     res.json({
       data: {
         chirp: await createChirp(req.body)
