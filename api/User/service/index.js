@@ -1,15 +1,23 @@
-const User = require("../model/user");
+const { to } = require("await-to-js");
 const uuidv1 = require("uuid/v1");
 const uuidv4 = require("uuid/v4");
+const User = require("../model/user");
 
 const createUser = async data => {
   data.uuid = uuidv1() + uuidv4();
-  const user = new User(data);
-  return await user.save();
+  let user = new User(data);
+  let err;
+  [err, user] = await to(user.save());
+  if (err) {
+    return err;
+  }
+  return user;
 };
 
 const getAllUsers = async () => {
-  return await User.find();
+  let [err, users] = await to(User.find());
+
+  return err ? err : users;
 };
 
 module.exports = {

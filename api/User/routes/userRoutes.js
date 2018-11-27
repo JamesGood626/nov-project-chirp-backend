@@ -1,6 +1,7 @@
 // const express = require("express");
 // const router = express.Router();
 const { validationResult } = require("express-validator/check");
+const { to } = require("await-to-js");
 const { createUser, getAllUsers } = require("../service");
 const checkUserInputs = require("../validation");
 const { UNPROCESSABLE_ENTITY } = require("../../StatusCodeConstants");
@@ -8,13 +9,19 @@ const { UNPROCESSABLE_ENTITY } = require("../../StatusCodeConstants");
 // @desc    Tests "userRoutes" route
 // @access  Public
 // router.get("/test", (req, res) => res.json({ msg: "userRoutes Works" }));
+
 const userRoutes = app => {
   app.post("/user", checkUserInputs, async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(UNPROCESSABLE_ENTITY).json({ errors: errors.array() });
     }
-    const user = await createUser(req.body);
+    const [err, user] = await to(createUser(req.body));
+    if (err) {
+      // subject to change. INTERNAL_SERVER_ERROR?
+      res.status(UNPROCESSABLE_ENTITY);
+      return res.json({ error: err.message });
+    }
     res.json({ username: user.username });
   });
 
