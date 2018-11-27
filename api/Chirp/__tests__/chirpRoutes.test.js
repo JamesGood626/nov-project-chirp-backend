@@ -10,23 +10,25 @@ const {
 } = require("../../testHelpers");
 const {
   NO_CONTENT,
+  UNPROCESSABLE_ENTITY,
   INTERNAL_SERVER_ERROR
 } = require("../../StatusCodeConstants");
+const User = require("../../User/model/user");
+const Chirp = require("../../Chirp/model/chirp");
 
 const chirpInput = {
   username: "Sally",
   message: "some words"
 };
 
-//should fail to delete
+const chirpInputTwo = {
+  username: "Jim",
+  message: "some more words"
+};
+
 const badChirpInput = {
-  chirp: {
-    message: "some words",
-    username: "Sally"
-  },
-  user: {
-    username: "Bill"
-  }
+  username: "Sally",
+  message: ""
 };
 
 describe("Hitting the chirpRoutes, a User may", () => {
@@ -36,6 +38,12 @@ describe("Hitting the chirpRoutes, a User may", () => {
   beforeAll(async done => {
     server = await app.listen(2006);
     createdRequest = await request.agent(server);
+    done();
+  });
+
+  beforeEach(async done => {
+    await dropCollection(User);
+    await dropCollection(Chirp);
     done();
   });
 
@@ -53,10 +61,26 @@ describe("Hitting the chirpRoutes, a User may", () => {
     done();
   });
 
+  test("receive error message when given bad chirpInput for creating chirp.", async done => {
+    const response = await postRequest(createdRequest, "/chirp", badChirpInput);
+    console.log("bad chirp creation response: ", response.body);
+    const { param, value, msg } = response.body.errors[0];
+    expect(param).toBe("message");
+    expect(value).toBe("");
+    expect(msg).toBe("Chirp must be at least 10 characters.");
+    // const parsed = parseJson(response.text);
+    // const { chirp } = parsed.data;
+    // expect(chirp.username).toBe("Sally");
+    // expect(chirp.message).toBe(chirpInput.message);
+    done();
+  });
+
   test("user can get all chirps", async done => {
+    await postRequest(createdRequest, "/chirp", chirpInput);
+    await postRequest(createdRequest, "/chirp", chirpInputTwo);
     const response = await getRequest(createdRequest, "/chirp");
     const parsed = parseJson(response.text);
-    expect(parsed.length).toBeGreaterThan(0);
+    expect(parsed.length).toBe(2);
     done();
   });
 

@@ -8,7 +8,14 @@ const UserSchema = new Schema({
     required: true
   },
   email: String,
-  username: String
+  username: {
+    type: String,
+    required: true
+  },
+  password: {
+    type: String,
+    required: true
+  }
 });
 
 const User = mongoose.models.User || mongoose.model("User", UserSchema);

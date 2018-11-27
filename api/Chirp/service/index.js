@@ -1,3 +1,4 @@
+const { to } = require("await-to-js");
 const Chirp = require("../model/chirp");
 const uuidv1 = require("uuid/v1");
 const uuidv4 = require("uuid/v4");
@@ -8,12 +9,15 @@ const {
 
 const createChirp = async data => {
   data.uuid = uuidv1() + uuidv4();
-  const chirp = new Chirp(data);
-  return await chirp.save();
+  let chirp = new Chirp(data);
+  let err;
+  [err, chirp] = await to(chirp.save());
+  return err ? err : chirp;
 };
 
 const getAllChirps = async () => {
-  return await Chirp.find();
+  const [err, chirps] = await to(Chirp.find());
+  return err ? err : chirps;
 };
 
 // Would be ideal to do it this way, need to look into the docs and Stack overflow
@@ -31,14 +35,13 @@ const getAllChirps = async () => {
 // };
 
 const deleteChirp = async id => {
-  const chirp = await Chirp.findById(id);
-  chirp.deleted = true;
-  const updatedChirp = await chirp.save();
-  if (updatedChirp.deleted === true) {
-    return NO_CONTENT;
-  } else {
-    return INTERNAL_SERVER_ERROR;
+  const [readErr, chirp] = await to(Chirp.findById(id));
+  if (readErr) {
+    return err;
   }
+  chirp.deleted = true;
+  const [writeErr, updatedChirp] = await to(chirp.save());
+  return writeErr ? INTERNAL_SERVER_ERROR : NO_CONTENT;
 };
 
 module.exports = {
