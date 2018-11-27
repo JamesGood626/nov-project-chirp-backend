@@ -1,8 +1,10 @@
 // const express = require("express");
 // const router = express.Router();
+const { promisify } = require("util");
 const { validationResult } = require("express-validator/check");
 const { to } = require("await-to-js");
-const { createUser, getAllUsers } = require("../service");
+const jwt = require("jsonwebtoken");
+const { createUser, loginUser, getAllUsers } = require("../service");
 const checkUserInputs = require("../validation");
 const { UNPROCESSABLE_ENTITY } = require("../../StatusCodeConstants");
 // @route   Get api/User/routes/userRoutes/test
@@ -25,13 +27,38 @@ const userRoutes = app => {
     res.json({ username: user.username });
   });
 
+  app.post("/login", async (req, res) => {
+    let err;
+    let user;
+    let token;
+    [err, user] = await to(loginUser(req.body));
+    if (err) {
+      res.status(UNPROCESSABLE_ENTITY).send(err);
+      return;
+    }
+    const { uuid, username, email, password } = user;
+    const promisifiedJwtSign = promisify(jwt.sign);
+    const expOption = { expiresIn: 60 * 60 };
+    [err, token] = await to(
+      promisifiedJwtSign(
+        { username, password },
+        process.env.SECRET_SHHH,
+        expOption
+      )
+    );
+    const data = {
+      uuid,
+      username,
+      email,
+      token
+    };
+    res.json(data);
+  });
+
   app.get("/users", async (req, res) => {
-    console.log("can GET users");
     const users = await getAllUsers();
     res.json(users);
   });
 };
 
 module.exports = userRoutes;
-
-// module.exports = router;

@@ -2,7 +2,7 @@ process.env.TEST_SUITE = "user-routes-test";
 const app = require("../../../app");
 const request = require("supertest");
 const User = require("../model/user");
-const { createUser } = require("../service");
+const { createUser, loginUser } = require("../service");
 const {
   postRequest,
   getRequest,
@@ -17,7 +17,18 @@ const {
 
 const userInput = {
   username: "Sally",
-  email: "sally@gmail.com"
+  email: "sally@gmail.com",
+  password: "passwordaaa"
+};
+
+const loginUserInput = {
+  username: "Sally",
+  password: "passwordaaa"
+};
+
+const badLoginUserInput = {
+  username: "Sally",
+  password: "passworddwadawd"
 };
 
 const badUserInput = {
@@ -48,6 +59,28 @@ describe("Hitting the userRoutes, a User may", () => {
     const response = await postRequest(createdRequest, "/user", userInput);
     const parsed = parseJson(response.text);
     expect(parsed.username).toBe("Sally");
+    done();
+  });
+
+  test("login a user", async done => {
+    await postRequest(createdRequest, "/user", userInput);
+    const response = await postRequest(
+      createdRequest,
+      "/login",
+      loginUserInput
+    );
+    expect(response.body.token.length).toBe(252);
+    done();
+  });
+
+  test("receive a message indicating bad login attempt", async done => {
+    await postRequest(createdRequest, "/user", userInput);
+    const response = await postRequest(
+      createdRequest,
+      "/login",
+      badLoginUserInput
+    );
+    expect(response.body.message).toBe("Incorrect username or password.");
     done();
   });
 

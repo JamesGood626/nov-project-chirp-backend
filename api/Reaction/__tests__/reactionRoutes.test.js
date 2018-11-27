@@ -12,9 +12,10 @@ const { createUser } = require("../../User/service");
 const { createChirp } = require("../../Chirp/service");
 
 const userInput = {
-  username: "Jim"
+  username: "Sally",
+  email: "sally@gmail.com",
+  password: "passwordaaa"
 };
-
 const chirpInput = {
   username: "Jim",
   message: "Hello I'm Jim."
@@ -47,24 +48,33 @@ describe("Testing reaction routes", () => {
     done();
   });
 
-  // test("chirp hates should increment", async done => {
-  //   let chirpId = "placeholder";
-  //   const response = await putRequest(createdRequest, `/chirp/hate/${chirpId}`);
-  //   //update when we knowwhat a valid chirp id will look like
-  //   expect(response.statusCode).toBeGreaterThan(400);
-  //   //TODO: test whether the chirps hates increment
-  //   done();
-  // });
+  test("chirp hates should increment", async done => {
+    const { uuid: userUuid } = await createUser(userInput);
+    const { uuid: chirpUuid } = await createChirp(chirpInput);
+    const hateInput = {
+      userUuid,
+      chirpUuid
+    };
+    const response = await putRequest(createdRequest, `/chirp/hate`, hateInput);
+    const { hateCount } = response.body.data;
+    expect(hateCount).toBe(1);
+    done();
+  });
 
-  // test("chirp favorites should increment", async done => {
-  //   let chirpId = "placeholder";
-  //   const response = await putRequest(
-  //     createdRequest,
-  //     `/chirp/favorite/${chirpId}`
-  //   );
-  //   //update when we knowwhat a valid chirp id will look like
-  //   expect(response.statusCode).toBeGreaterThan(400);
-  //   //TODO: test whether the chirps favorites increment
-  //   done();
-  // });
+  test("chirp favorites should increment", async done => {
+    const { uuid: userUuid } = await createUser(userInput);
+    const { uuid: chirpUuid } = await createChirp(chirpInput);
+    const favoriteInput = {
+      userUuid,
+      chirpUuid
+    };
+    const response = await putRequest(
+      createdRequest,
+      `/chirp/favorite`,
+      favoriteInput
+    );
+    const { favoriteCount } = response.body.data;
+    expect(favoriteCount).toBe(1);
+    done();
+  });
 });
