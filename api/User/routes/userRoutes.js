@@ -1,5 +1,5 @@
-// const express = require("express");
-// const router = express.Router();
+const express = require("express");
+const router = express.Router();
 const { promisify } = require("util");
 const { validationResult } = require("express-validator/check");
 const { to } = require("await-to-js");
@@ -11,54 +11,53 @@ const { UNPROCESSABLE_ENTITY } = require("../../StatusCodeConstants");
 // @desc    Tests "userRoutes" route
 // @access  Public
 // router.get("/test", (req, res) => res.json({ msg: "userRoutes Works" }));
+if (process.env.NODE_ENV === "test") {
+  process.env.SECRET_SHHH = "shh";
+}
 
-const userRoutes = app => {
-  app.post("/user", checkUserInputs, async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(UNPROCESSABLE_ENTITY).json({ errors: errors.array() });
-    }
-    const [err, user] = await to(createUser(req.body));
-    if (err) {
-      // subject to change. INTERNAL_SERVER_ERROR?
-      res.status(UNPROCESSABLE_ENTITY);
-      return res.json({ error: err.message });
-    }
-    res.json({ username: user.username });
-  });
+//register user
+router.post("/", checkUserInputs, async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(UNPROCESSABLE_ENTITY).json({ errors: errors.array() });
+  }
+  const [err, user] = await to(createUser(req.body));
+  if (err) {
+    // subject to change. INTERNAL_SERVER_ERROR?
+    res.status(UNPROCESSABLE_ENTITY);
+    return res.json({ error: err.message });
+  }
+  res.json({ username: user.username });
+});
 
-  app.post("/login", async (req, res) => {
-    let err;
-    let user;
-    let token;
-    [err, user] = await to(loginUser(req.body));
-    if (err) {
-      res.status(UNPROCESSABLE_ENTITY).send(err);
-      return;
-    }
-    const { uuid, username, email, password } = user;
-    const promisifiedJwtSign = promisify(jwt.sign);
-    const expOption = { expiresIn: 60 * 60 };
-    [err, token] = await to(
-      promisifiedJwtSign(
-        { username, password },
-        process.env.SECRET_SHHH,
-        expOption
-      )
-    );
-    const data = {
-      uuid,
-      username,
-      email,
-      token
-    };
-    res.json(data);
-  });
+router.post("/login", async (req, res) => {
+  let err;
+  let user;
+  let token;
+  [err, user] = await to(loginUser(req.body));
+  if (err) {
+    res.status(UNPROCESSABLE_ENTITY).send(err);
+    return;
+  }
+  const { uuid, username, email } = user;
+  const promisifiedJwtSign = promisify(jwt.sign);
+  const expOption = { expiresIn: 60 * 60 };
+  [err, token] = await to(
+    promisifiedJwtSign({ userId: uuid }, process.env.SECRET_SHHH, expOption)
+  );
+  console.log("THE TOKEN: ");
+  const data = {
+    uuid,
+    username,
+    email,
+    token
+  };
+  res.json(data);
+});
 
-  app.get("/users", async (req, res) => {
-    const users = await getAllUsers();
-    res.json(users);
-  });
-};
+router.get("/all-users", async (req, res) => {
+  const users = await getAllUsers();
+  res.json(users);
+});
 
-module.exports = userRoutes;
+module.exports = router;

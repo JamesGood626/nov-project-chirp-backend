@@ -66,10 +66,11 @@ describe("Hitting the userRoutes, a User may", () => {
     await postRequest(createdRequest, "/user", userInput);
     const response = await postRequest(
       createdRequest,
-      "/login",
+      "/user/login",
       loginUserInput
     );
-    expect(response.body.token.length).toBe(252);
+    console.log("THE FAILED LOGIN RESP BODY: ", response.body);
+    expect(response.body.token.length).toBe(240);
     done();
   });
 
@@ -77,7 +78,7 @@ describe("Hitting the userRoutes, a User may", () => {
     await postRequest(createdRequest, "/user", userInput);
     const response = await postRequest(
       createdRequest,
-      "/login",
+      "/user/login",
       badLoginUserInput
     );
     expect(response.body.message).toBe("Incorrect username or password.");
@@ -96,7 +97,7 @@ describe("Hitting the userRoutes, a User may", () => {
 
   test("get all users", async done => {
     await createUser(userInput);
-    const response = await getRequest(createdRequest, "/users");
+    const response = await getRequest(createdRequest, "/user/all-users");
     const parsed = parseJson(response.text);
     expect(parsed.length).toEqual(1);
     done();

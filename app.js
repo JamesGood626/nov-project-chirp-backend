@@ -8,8 +8,8 @@ const reactionRoutes = require("./api/Reaction/routes/reactionRoutes");
 applyMiddleware(app);
 
 // Use Routes
-userRoutes(app);
-chirpRoutes(app);
-reactionRoutes(app);
+app.use("/user", userRoutes);
+app.use("/chirp", chirpRoutes);
+app.use("/chirp/reaction/", reactionRoutes);
 
 module.exports = app;
