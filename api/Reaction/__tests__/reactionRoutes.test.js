@@ -42,7 +42,11 @@ describe("Testing reaction routes", () => {
       userUuid,
       chirpUuid
     };
-    const response = await putRequest(createdRequest, `/chirp/like`, likeInput);
+    const response = await putRequest(
+      createdRequest,
+      `/chirp/reaction/like`,
+      likeInput
+    );
     const { likeCount } = response.body.data;
     expect(likeCount).toBe(1);
     done();
@@ -55,7 +59,11 @@ describe("Testing reaction routes", () => {
       userUuid,
       chirpUuid
     };
-    const response = await putRequest(createdRequest, `/chirp/hate`, hateInput);
+    const response = await putRequest(
+      createdRequest,
+      `/chirp/reaction/hate`,
+      hateInput
+    );
     const { hateCount } = response.body.data;
     expect(hateCount).toBe(1);
     done();
@@ -70,7 +78,7 @@ describe("Testing reaction routes", () => {
     };
     const response = await putRequest(
       createdRequest,
-      `/chirp/favorite`,
+      `/chirp/reaction/favorite`,
       favoriteInput
     );
     const { favoriteCount } = response.body.data;
