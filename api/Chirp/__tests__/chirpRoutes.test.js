@@ -84,10 +84,7 @@ describe("Hitting the chirpRoutes, a User may", () => {
       token,
       chirpInput
     );
-    console.log("THE RESPONSE BODY WE NEED: ", response.body.data.chirp);
     const { chirp } = response.body.data;
-    // const parsed = parseJson(response.text);
-    // const { chirp } = parsed.data;
     expect(chirp.username).toBe("Sally");
     expect(chirp.message).toBe(chirpInput.message);
     done();
