@@ -67,12 +67,12 @@ describe("Hitting the chirpRoutes, a User may", () => {
   });
 
   beforeEach(async done => {
-    await dropCollection(User);
     await dropCollection(Chirp);
     done();
   });
 
   afterAll(async done => {
+    await dropCollection(User);
     await server.close(done);
   });
 
@@ -84,8 +84,10 @@ describe("Hitting the chirpRoutes, a User may", () => {
       token,
       chirpInput
     );
-    const parsed = parseJson(response.text);
-    const { chirp } = parsed.data;
+    console.log("THE RESPONSE BODY WE NEED: ", response.body.data.chirp);
+    const { chirp } = response.body.data;
+    // const parsed = parseJson(response.text);
+    // const { chirp } = parsed.data;
     expect(chirp.username).toBe("Sally");
     expect(chirp.message).toBe(chirpInput.message);
     done();
@@ -102,10 +104,6 @@ describe("Hitting the chirpRoutes, a User may", () => {
     expect(param).toBe("message");
     expect(value).toBe("");
     expect(msg).toBe("Chirp must be at least 10 characters.");
-    // const parsed = parseJson(response.text);
-    // const { chirp } = parsed.data;
-    // expect(chirp.username).toBe("Sally");
-    // expect(chirp.message).toBe(chirpInput.message);
     done();
   });
 
