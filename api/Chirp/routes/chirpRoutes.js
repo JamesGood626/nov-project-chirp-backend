@@ -32,6 +32,13 @@ router.get("/", async (req, res) => {
 //create new chirp
 router.post("/", checkChirpInputs, async (req, res) => {
   const errors = validationResult(req);
+  console.log(req.Chirp);
+  const { iat, exp } = req.Chirp;
+
+  // if (iat < exp) {
+  //   req.body.Chirp =
+  //   req
+
   if (!errors.isEmpty()) {
     res.status(UNPROCESSABLE_ENTITY).json({ errors: errors.array() });
     return;
