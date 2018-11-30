@@ -6,6 +6,7 @@ const { createUser, loginUser } = require("../service");
 const {
   postRequest,
   getRequest,
+  postRequestWithHeaders,
   dropCollection,
   parseJson
 } = require("../../testHelpers");
@@ -69,8 +70,7 @@ describe("Hitting the userRoutes, a User may", () => {
       "/user/login",
       loginUserInput
     );
-    console.log("THE FAILED LOGIN RESP BODY: ", response.body);
-    expect(response.body.token.length).toBe(240);
+    expect(response.body.token.length).toBe(243);
     done();
   });
 

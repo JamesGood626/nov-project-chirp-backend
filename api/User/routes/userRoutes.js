@@ -11,9 +11,6 @@ const { UNPROCESSABLE_ENTITY } = require("../../StatusCodeConstants");
 // @desc    Tests "userRoutes" route
 // @access  Public
 // router.get("/test", (req, res) => res.json({ msg: "userRoutes Works" }));
-if (process.env.NODE_ENV === "test") {
-  process.env.SECRET_SHHH = "shh";
-}
 
 //register user
 router.post("/", checkUserInputs, async (req, res) => {
@@ -43,9 +40,8 @@ router.post("/login", async (req, res) => {
   const promisifiedJwtSign = promisify(jwt.sign);
   const expOption = { expiresIn: 60 * 60 };
   [err, token] = await to(
-    promisifiedJwtSign({ userId: uuid }, process.env.SECRET_SHHH, expOption)
+    promisifiedJwtSign({ userUuid: uuid }, process.env.SECRET_SHHH, expOption)
   );
-  console.log("THE TOKEN: ");
   const data = {
     uuid,
     username,

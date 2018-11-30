@@ -49,10 +49,8 @@ const comparePasswords = (hashedPassword, passwordInput) => {
   return new Promise(async (resolve, reject) => {
     await bcrypt.compare(passwordInput, hashedPassword, (err, res) => {
       if (err) {
-        console.log("BCRYPT COMPARE PASS ERR: ", err);
         reject(err);
       }
-      console.log("PASSWORDS MATCH: ", res);
       resolve(res);
     });
   });
@@ -61,8 +59,6 @@ const comparePasswords = (hashedPassword, passwordInput) => {
 const loginUser = data => {
   return new Promise((resolve, reject) => {
     passport.authenticate("local", function(err, user, info) {
-      console.log("INFO:", info);
-      console.log("ERR:", err);
       if (err) {
         reject(err);
       }

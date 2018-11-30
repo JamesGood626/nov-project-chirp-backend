@@ -3,8 +3,42 @@ const Chirp = require("../../Chirp/model/chirp");
 const {
   SUCCESS,
   NO_CONTENT,
+  NOT_MODIFIED,
+  UNPROCESSABLE_ENTITY,
   INTERNAL_SERVER_ERROR
 } = require("../../StatusCodeConstants");
+
+const updateReactionCount = async (req, res, type, Model) => {
+  //iat = issued at time
+  const { iat, exp } = req.user;
+  if (iat < exp) {
+    req.body.type = type;
+    req.body.chirpUuid = req.params.chirpId;
+    req.body.userUuid = req.user.userUuid;
+    let err;
+    let updatedCount;
+    [err, updatedCount] = await to(lookUpReaction(Model, req.body));
+    sendResponse(res, type, updatedCount, err);
+  } else {
+    // send indication to the client that user needs to login
+    // status code?
+  }
+};
+
+const lookUpReaction = async (ReactionModel, data) => {
+  const { userUuid, chirpUuid } = data;
+  let err;
+  let reaction;
+  let updatedReactionCount;
+  [err, reaction] = await to(ReactionModel.find({ userUuid, chirpUuid }));
+  if (reaction.length !== 0) {
+    // Reaction already created, send back not fulfilled
+    return false;
+  } else {
+    [err, updatedReactionCount] = await to(createReaction(ReactionModel, data));
+    return err ? err : updatedReactionCount;
+  }
+};
 
 const createReaction = async (ReactionModel, data) => {
   const { chirpUuid, type } = data;
@@ -28,19 +62,18 @@ const createReaction = async (ReactionModel, data) => {
   return false;
 };
 
-const lookUpReaction = async (ReactionModel, data) => {
-  const { userUuid, chirpUuid } = data;
-  let err;
-  let reaction;
-  let updatedReactionCount;
-  [err, reaction] = await to(ReactionModel.find({ userUuid, chirpUuid }));
-  if (reaction.length !== 0) {
-    // Reaction already created, send back not fulfilled
-    return false;
+// will move this out
+const sendResponse = (res, type, count, err) => {
+  if (err) {
+    res.status(UNPROCESSABLE_ENTITY).send();
+  }
+  if (!count) {
+    res.status(NOT_MODIFIED).send();
   } else {
-    [err, updatedReactionCount] = await to(createReaction(ReactionModel, data));
-    return err ? err : updatedReactionCount;
+    const dataKey = type + "Count";
+    res.status(SUCCESS);
+    res.json({ data: { [dataKey]: count } });
   }
 };
 
-module.exports = { lookUpReaction };
+module.exports = { updateReactionCount };
