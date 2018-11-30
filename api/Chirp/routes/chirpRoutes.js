@@ -4,6 +4,8 @@ const { validationResult } = require("express-validator/check");
 const { createChirp, deleteChirp, getAllChirps } = require("../service");
 const checkChirpInputs = require("../validation");
 const { to } = require("await-to-js");
+const User = require("../../User/model/user");
+const Chirp = require("../model/chirp");
 const {
   NO_CONTENT,
   UNPROCESSABLE_ENTITY,
@@ -32,22 +34,28 @@ router.get("/", async (req, res) => {
 //create new chirp
 router.post("/", checkChirpInputs, async (req, res) => {
   const errors = validationResult(req);
-  console.log("this is the user ID", req.user);
-  const { iat, exp, userUuid } = req.user,
-
-   if (iat < exp) { 
-//get user from db
-
-// check that user was retrieved from db
-//if so then execute logic,
-// else send back 304(not serviceable)
-   }
-    
-
   if (!errors.isEmpty()) {
     res.status(UNPROCESSABLE_ENTITY).json({ errors: errors.array() });
     return;
   }
+  const { iat, exp, userUuid } = req.user;
+  if (iat < exp) {
+    //get user from db
+    console.log("THE UUID WE NEED: ", userUuid);
+    const user = await User.findOne({ uuid: userUuid });
+    console.log("THE USER WE NEED: ", user);
+    if (user) {
+      const id = user._id;
+      req.body.user = id;
+    } else {
+      res.status(UNPROCESSABLE_ENTITY).send();
+      return;
+    }
+  } else {
+    res.status(UNPROCESSABLE_ENTITY).send();
+    return;
+  }
+
   const [err, chirp] = await to(createChirp(req.body));
 
   if (err) {
