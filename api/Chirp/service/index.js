@@ -1,4 +1,5 @@
 const { to } = require("await-to-js");
+const User = require("../../User/model/user");
 const Chirp = require("../model/chirp");
 const uuidv1 = require("uuid/v1");
 const uuidv4 = require("uuid/v4");

@@ -31,43 +31,109 @@ router.get("/", async (req, res) => {
   res.json(chirps);
 });
 
-//create new chirp
-router.post("/", checkChirpInputs, async (req, res) => {
+const createChirpIfValid = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     res.status(UNPROCESSABLE_ENTITY).json({ errors: errors.array() });
     return;
   }
-  const { iat, exp, userUuid } = req.user;
-  if (iat < exp) {
-    //get user from db
-    console.log("THE UUID WE NEED: ", userUuid);
-    const user = await User.findOne({ uuid: userUuid });
-    console.log("THE USER WE NEED: ", user);
-    if (user) {
-      const id = user._id;
-      req.body.user = id;
-    } else {
-      res.status(UNPROCESSABLE_ENTITY).send();
-      return;
-    }
-  } else {
+  await authorizeUser(req, res);
+  // create chirp
+  const [err, createdChirpData] = await to(createChirpCatch(req.body));
+  console.log("THE ERR WE NEED: ", err);
+  console.log("THE CREATED CHIRP WE NEED: ", createdChirpData);
+  if (err) {
     res.status(UNPROCESSABLE_ENTITY).send();
     return;
   }
+  res.json(createdChirpData);
+};
 
-  const [err, chirp] = await to(createChirp(req.body));
+const authorizeUser = async (req, res) => {
+  const { iat, exp, userUuid } = req.user;
+  if (iat < exp) {
+    const [err, user] = await to(checkIfValidUser(userUuid));
+    if (err) {
+      // Might be a different status code that we should use here?
+      res.status(UNPROCESSABLE_ENTITY).send();
+    }
+    // Mutating req.body to facilitate providing the necessary data for Chirp creation.
+    req.body.user = user._id;
+  }
+};
 
-  if (err) {
-    res.status(INTERNAL_SERVER_ERROR).json({ errors: [err] });
-    return;
-  } else {
-    res.json({
+const checkIfValidUser = userUuid => {
+  return new Promise(async (resolve, reject) => {
+    const [err, user] = await to(User.findOne({ uuid: userUuid }));
+    if (err) {
+      reject(err);
+    }
+    resolve(user);
+  });
+};
+
+const createChirpCatch = data => {
+  return new Promise(async (resolve, reject) => {
+    const [err, chirp] = await to(createChirp(data));
+    if (err) {
+      reject(err);
+    }
+    const payload = {
       data: {
         chirp: chirp
       }
-    });
-  }
+    };
+    resolve(payload);
+  });
+
+  // if (err) {
+  //   res.status(INTERNAL_SERVER_ERROR).json({ errors: [err] });
+  //   return;
+  // } else {
+  //   res.json({
+  //     data: {
+  //       chirp: chirp
+  //     }
+  //   });
+  // }
+};
+
+//create new chirp
+router.post("/", checkChirpInputs, (req, res) => {
+  createChirpIfValid(req, res);
+  // const errors = validationResult(req);
+  // if (!errors.isEmpty()) {
+  //   res.status(UNPROCESSABLE_ENTITY).json({ errors: errors.array() });
+  //   return;
+  // }
+  // const { iat, exp, userUuid } = req.user;
+  // if (iat < exp) {
+  //   //get user from db
+  //   const user = await User.findOne({ uuid: userUuid });
+  //   if (user) {
+  //     const id = user._id;
+  //     req.body.user = id;
+  //   } else {
+  //     res.status(UNPROCESSABLE_ENTITY).send();
+  //     return;
+  //   }
+  // } else {
+  //   res.status(UNPROCESSABLE_ENTITY).send();
+  //   return;
+  // }
+
+  // const [err, chirp] = await to(createChirp(req.body));
+
+  // if (err) {
+  //   res.status(INTERNAL_SERVER_ERROR).json({ errors: [err] });
+  //   return;
+  // } else {
+  //   res.json({
+  //     data: {
+  //       chirp: chirp
+  //     }
+  //   });
+  // }
 });
 
 // (soft) delete chirp
