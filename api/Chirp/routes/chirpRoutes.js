@@ -32,12 +32,17 @@ router.get("/", async (req, res) => {
 //create new chirp
 router.post("/", checkChirpInputs, async (req, res) => {
   const errors = validationResult(req);
-  console.log(req.Chirp);
-  const { iat, exp } = req.Chirp;
+  console.log("this is the user ID", req.user);
+  const { iat, exp, userUuid } = req.user,
 
-  // if (iat < exp) {
-  //   req.body.Chirp =
-  //   req
+   if (iat < exp) { 
+//get user from db
+
+// check that user was retrieved from db
+//if so then execute logic,
+// else send back 304(not serviceable)
+   }
+    
 
   if (!errors.isEmpty()) {
     res.status(UNPROCESSABLE_ENTITY).json({ errors: errors.array() });
