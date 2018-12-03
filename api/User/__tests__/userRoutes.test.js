@@ -1,4 +1,4 @@
-process.env.TEST_SUITE = "user-routes-test";
+//process.env.TEST_SUITE = "user-routes-test";
 const app = require("../../../app");
 const request = require("supertest");
 const User = require("../model/user");
@@ -40,8 +40,9 @@ const badUserInput = {
 describe("Hitting the userRoutes, a User may", () => {
   let server;
   let createdRequest;
-
+  
   beforeAll(async done => {
+    
     server = await app.listen(2000);
     createdRequest = await request.agent(server);
     done();

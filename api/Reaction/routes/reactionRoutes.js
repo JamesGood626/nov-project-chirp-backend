@@ -10,6 +10,18 @@ const LIKES = "likes";
 const HATES = "hates";
 const FAVORITES = "favorites";
 
+const sendResponse = (res, type, count, err) =>{
+  if (err) {
+    res.status(UNPROCESSABLE_ENTITY).send();
+  }
+  if(!count){
+  res.status(CONTENT_NOT_MODIFIED).send();
+  }
+  const dataKey = type+"Count";
+  res.status(SUCCESS);
+  res.json({ data: { [dataKey]: count } });
+}
+
 // chirp "like" route
 router.put("/like/:chirpId", (req, res) => {
   updateReactionCount(req, res, LIKES, LikeReaction);

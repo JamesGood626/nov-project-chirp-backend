@@ -1,4 +1,4 @@
-process.env.TEST_SUITE = "chirp-test";
+//process.env.TEST_SUITE = "chirp-test";
 const app = require("../../../app");
 const request = require("supertest");
 const {

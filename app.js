@@ -27,3 +27,5 @@ app.use("/chirp", chirpRoutes);
 app.use("/chirp/reaction/", reactionRoutes);
 
 module.exports = app;
+//discuss crhirp/comment structure
+//david needs jwt token

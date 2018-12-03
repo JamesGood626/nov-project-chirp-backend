@@ -1,4 +1,4 @@
-process.env.TEST_SUITE = "reaction-routes-test";
+//process.env.TEST_SUITE = "reaction-routes-test";
 const request = require("supertest");
 const app = require("../../../app");
 const {
