@@ -22,6 +22,7 @@ const updateReactionCount = async (req, res, type, Model) => {
   } else {
     // send indication to the client that user needs to login
     // status code?
+    res.status(408).send();
   }
 };
 

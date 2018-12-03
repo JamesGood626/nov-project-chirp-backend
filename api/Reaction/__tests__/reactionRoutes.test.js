@@ -11,7 +11,7 @@ const {
   parseJson
 } = require("../../testHelpers");
 const { createUser } = require("../../User/service");
-const { createChirp } = require("../../Chirp/service");
+const { createChirp } = require("../../Chirp/service/create");
 
 const userInput = {
   username: "Sally",
