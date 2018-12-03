@@ -25,5 +25,5 @@ app.use("/user", userRoutes);
 app.use(verifyJwt);
 app.use("/chirp", chirpRoutes);
 app.use("/chirp/reaction/", reactionRoutes);
-
+app.use("/chirp/comment/", commentRoutes);
 module.exports = app;
