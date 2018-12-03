@@ -5,8 +5,17 @@ const mongoose = require("mongoose");
 const morgan = require("morgan");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
+const { to } = require("await-to-js");
 const { comparePasswords } = require("./api/User/service");
 const User = require("./api/User/model/user");
+
+const errorOccuredMessage = {
+  message: "An error occured while finding user."
+};
+
+const passwordsDontMatchMessage = {
+  message: "Incorrect username or password."
+};
 
 const applyMiddleware = app => {
   app.use(cors());
@@ -16,18 +25,15 @@ const applyMiddleware = app => {
 
   passport.use(
     new LocalStrategy(async (username, password, done) => {
-      const user = await User.findOne({ username: username });
-      if (user) {
-        const passwordsMatch = await comparePasswords(user.password, password);
-        // const passwordsMatch = bcrypt.compareSync(password, user.password);
-        console.log("RESULT OF PASSWORDSMATCH: ", passwordsMatch);
-        if (!passwordsMatch) {
-          return done(null, false, {
-            message: "Incorrect username or password."
-          });
-        }
-        return done(null, user);
+      const [err, user] = await to(User.findOne({ username }));
+      if (err) {
+        return done(null, false, errorOccuredMessage);
       }
+      const passwordsMatch = await comparePasswords(user.password, password);
+      if (!passwordsMatch) {
+        return done(null, false, passwordsDontMatchMessage);
+      }
+      return done(null, user);
     })
   );
 
