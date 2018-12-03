@@ -25,7 +25,7 @@ app.use("/user", userRoutes);
 app.use(verifyJwt);
 app.use("/chirp", chirpRoutes);
 app.use("/chirp/reaction/", reactionRoutes);
-
+app.user("/chirp/comment/", commentRoutes);
 module.exports = app;
 //discuss crhirp/comment structure
 //david needs jwt token
