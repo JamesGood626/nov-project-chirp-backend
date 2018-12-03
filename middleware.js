@@ -10,7 +10,7 @@ const { comparePasswords } = require("./api/User/service");
 const User = require("./api/User/model/user");
 
 const errorOccuredMessage = {
-  message: "An error occured while finding user."
+  message: "An error occured while authenticating."
 };
 
 const passwordsDontMatchMessage = {
@@ -29,6 +29,9 @@ const applyMiddleware = app => {
       if (err) {
         return done(null, false, errorOccuredMessage);
       }
+      if (!user) {
+        return done(null, false, errorOccuredMessage);
+      }
       const passwordsMatch = await comparePasswords(user.password, password);
       if (!passwordsMatch) {
         return done(null, false, passwordsDontMatchMessage);
@@ -41,7 +44,7 @@ const applyMiddleware = app => {
 
   const DB_NAME = process.env.TEST_SUITE || "chirp";
 
-  const LOCAL_URI = `mongodb://localhost:27017/`;
+  const LOCAL_URI = `mongodb://localhost:27017/${DB_NAME}`;
   const MONGO_URI =
     process.env.NODE_ENV === "prod" ? process.env.URL : LOCAL_URI;
 
