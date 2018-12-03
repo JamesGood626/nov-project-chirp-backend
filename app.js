@@ -5,6 +5,7 @@ const applyMiddleware = require("./middleware");
 const userRoutes = require("./api/User/routes/userRoutes");
 const chirpRoutes = require("./api/Chirp/routes/chirpRoutes");
 const reactionRoutes = require("./api/Reaction/routes/reactionRoutes");
+const commentRoutes = require("./api/Reaction/routes/commentRoutes");
 
 if (process.env.NODE_ENV === "test") {
   process.env.SECRET_SHHH = "shh";
