@@ -15,8 +15,6 @@ const ChirpSchema = new Schema({
     type: String,
     required: true
   },
-  // AND we're going to temporarily stick with username for now,
-  // until the Auth situation is figured out.
   user: {
     type: Schema.Types.ObjectId,
     ref: "User",
