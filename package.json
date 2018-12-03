@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "ci": "cross-env NODE_ENV=test jest --ci --detectOpenHandles --forceExit",
     "test": "cross-env NODE_ENV=test jest --watchAll"
   },
   "author": "",

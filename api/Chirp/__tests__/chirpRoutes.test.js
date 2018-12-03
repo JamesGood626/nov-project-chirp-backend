@@ -84,10 +84,7 @@ describe("Hitting the chirpRoutes, a User may", () => {
       token,
       chirpInput
     );
-    console.log("THE RESPONSE BODY WE NEED: ", response.body.data.chirp);
     const { chirp } = response.body.data;
-    // const parsed = parseJson(response.text);
-    // const { chirp } = parsed.data;
     expect(chirp.username).toBe("Sally");
     expect(chirp.message).toBe(chirpInput.message);
     done();
@@ -107,23 +104,23 @@ describe("Hitting the chirpRoutes, a User may", () => {
     done();
   });
 
-  // test("user can get all chirps", async done => {
-  //   await postRequestWithHeaders(createdRequest, "/chirp", chirpInput, token);
-  //   await postRequestWithHeaders(
-  //     createdRequest,
-  //     "/chirp",
-  //     token,
-  //     chirpInputTwo
-  //   );
-  //   const response = await getRequestWithHeaders(
-  //     createdRequest,
-  //     "/chirp",
-  //     token
-  //   );
-  //   const parsed = parseJson(response.text);
-  //   expect(parsed.length).toBe(2);
-  //   done();
-  // });
+  test("user can get all chirps", async done => {
+    await postRequestWithHeaders(createdRequest, "/chirp", token, chirpInput);
+    await postRequestWithHeaders(
+      createdRequest,
+      "/chirp",
+      token,
+      chirpInputTwo
+    );
+    const response = await getRequestWithHeaders(
+      createdRequest,
+      "/chirp",
+      token
+    );
+    const parsed = parseJson(response.text);
+    expect(parsed.length).toBe(2);
+    done();
+  });
 
   // test("user can get delete a chirp", async done => {
   //   const createdChirpResponse = await postRequest(

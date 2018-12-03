@@ -1,7 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const { validationResult } = require("express-validator/check");
-const { createChirp, deleteChirp, getAllChirps } = require("../service");
+const createChirpIfAuthorized = require("../service/create");
+const allChirpsIfAuthorized = require("../service/retrieve");
+const deleteChirpIfAuthorized = require("../service/delete");
 const checkChirpInputs = require("../validation");
 const { to } = require("await-to-js");
 const User = require("../../User/model/user");
@@ -23,57 +25,12 @@ const {
 // })
 
 //return all chirps
-router.get("/", async (req, res) => {
-  const [err, chirps] = await to(getAllChirps());
-  if (err) {
-    return res.json(err);
-  }
-  res.json(chirps);
-});
+router.get("/", allChirpsIfAuthorized);
 
-//create new chirp
-router.post("/", checkChirpInputs, async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    res.status(UNPROCESSABLE_ENTITY).json({ errors: errors.array() });
-    return;
-  }
-  const { iat, exp, userUuid } = req.user;
-  if (iat < exp) {
-    //get user from db
-    console.log("THE UUID WE NEED: ", userUuid);
-    const user = await User.findOne({ uuid: userUuid });
-    console.log("THE USER WE NEED: ", user);
-    if (user) {
-      const id = user._id;
-      req.body.user = id;
-    } else {
-      res.status(UNPROCESSABLE_ENTITY).send();
-      return;
-    }
-  } else {
-    res.status(UNPROCESSABLE_ENTITY).send();
-    return;
-  }
-
-  const [err, chirp] = await to(createChirp(req.body));
-
-  if (err) {
-    res.status(INTERNAL_SERVER_ERROR).json({ errors: [err] });
-    return;
-  } else {
-    res.json({
-      data: {
-        chirp: chirp
-      }
-    });
-  }
-});
+// create new chirp
+router.post("/", checkChirpInputs, createChirpIfAuthorized);
 
 // (soft) delete chirp
-router.put("/delete/:id", async (req, res) => {
-  const status = await deleteChirp(req.params.id);
-  res.send(status);
-});
+router.put("/delete/:id", deleteChirpIfAuthorized);
 
 module.exports = router;
