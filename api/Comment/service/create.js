@@ -19,19 +19,20 @@ const createCommentIfAuthorized = async (req, res) => {
     return;
   }
   await authorizeUser(req, res);
-  //req.body.chirpUuid = req.params.chirpId;
+  req.body.chirpUuid = req.body.chirpId;
   req.body.userUuid = req.user.userUuid;
-  //req.body.username = req.body.username;
+  req.body.username = req.body.username;
   // create comment
   const [err, createdCommentData] = await to(createCommentCatch(req.body));
   if (err) {
-    res.status(UNPROCESSABLE_ENTITY).send();
+    res.status(UNPROCESSABLE_ENTITY).json(err);
     return;
   }
+  console.log("THE CREATED COMMENT DATA: ", createdCommentData)
   res.json(createdCommentData);
 };
 
-// Level Two Service (called by createCommentIfValid)
+// Level Two Service (called by createCommentIfAuthorized)
 const createCommentCatch = data => {
   return new Promise(async (resolve, reject) => {
     const [err, comment] = await to(createComment(data));
@@ -56,7 +57,9 @@ const createComment = async data => {
   let comment = new Comment(data);
   let err;
   [err, comment] = await to(comment.save());
-  return err ? err : comment;
+  //[err2, comments] = await to(Comment.find());
+  //console.log(comments)
+  return err ? Promise.reject(err) : Promise.resolve(comment);
 };
 
 module.exports = createCommentIfAuthorized;

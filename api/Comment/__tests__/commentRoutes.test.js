@@ -5,6 +5,7 @@ const {
   postRequest,
   getRequest,
   putRequest,
+  getRequestWithHeaders,
   postRequestWithHeaders,
   putRequestWithHeaders,
   dropCollection,
@@ -12,7 +13,9 @@ const {
 } = require("../../testHelpers");
 const { createUser } = require("../../User/service");
 const { createChirp } = require("../../Chirp/service/create");
-
+const { retrieveAllChirps } = require("../../Chirp/service/retrieve");
+const  { getCommentsForChirp}  = require("../../Comment/service/retrieve");
+const {Chirp} = require("../../Chirp/model/chirp");
 const userInput = {
   username: "Sally",
   email: "sally@gmail.com",
@@ -34,9 +37,10 @@ describe("Testing comment routes", () => {
   let createdRequest;
   let token;
   let chirpUuid;
+  
 
   beforeAll(async done => {
-    server = await app.listen(2010);
+    server = await app.listen(2018);
     createdRequest = await request.agent(server);
     // create user
     await postRequest(createdRequest, "/user", userInput);
@@ -68,14 +72,21 @@ describe("Testing comment routes", () => {
       `/chirp/comment/`,
       token,
       {
-          chirpUuid:chirpUuid,
+          chirpId:chirpUuid,
           comment: "some more words"
       }
     );
-    console.log(response.status);
-    console.log(response.body)
+    
     const { comment } = response.body.data;
     expect(comment).toBe("some more words");
     done();
   });
+  test("should retrieve comments for chirp", async done =>{
+    const response =  await getRequestWithHeaders(createdRequest, `chirp/comment/${chirpUuid}`, token);
+    //const {comments} = response.body.data;
+    console.log(response.status);
+    console.log("THE RETRIEVE COMMENTS FOR CHIRP RESPONSE BODY",  response.body);
+    //expect().toBeGreaterThan(0);
+    done();
+  })
 });
