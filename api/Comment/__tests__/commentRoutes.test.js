@@ -14,8 +14,8 @@ const {
 const { createUser } = require("../../User/service");
 const { createChirp } = require("../../Chirp/service/create");
 const { retrieveAllChirps } = require("../../Chirp/service/retrieve");
-const  { getCommentsForChirp}  = require("../../Comment/service/retrieve");
-const {Chirp} = require("../../Chirp/model/chirp");
+const { getCommentsForChirp } = require("../../Comment/service/retrieve");
+const { Chirp } = require("../../Chirp/model/chirp");
 const userInput = {
   username: "Sally",
   email: "sally@gmail.com",
@@ -37,10 +37,9 @@ describe("Testing comment routes", () => {
   let createdRequest;
   let token;
   let chirpUuid;
-  
 
   beforeAll(async done => {
-    server = await app.listen(2018);
+    server = await app.listen(2010);
     createdRequest = await request.agent(server);
     // create user
     await postRequest(createdRequest, "/user", userInput);
@@ -66,27 +65,32 @@ describe("Testing comment routes", () => {
   });
 
   test("comment should get created", async done => {
-    console.log("CHIRP UUID "+chirpUuid);
+    console.log("CHIRP UUID " + chirpUuid);
     const response = await postRequestWithHeaders(
       createdRequest,
       `/chirp/comment/`,
       token,
       {
-          chirpId:chirpUuid,
-          comment: "some more words"
+        chirpId: chirpUuid,
+        comment: "some more words"
       }
     );
-    
+
     const { comment } = response.body.data;
     expect(comment).toBe("some more words");
     done();
   });
-  test("should retrieve comments for chirp", async done =>{
-    const response =  await getRequestWithHeaders(createdRequest, `chirp/comment/${chirpUuid}`, token);
+
+  test("should retrieve comments for chirp", async done => {
+    const response = await getRequestWithHeaders(
+      createdRequest,
+      `/chirp/comment/${chirpUuid}`,
+      token
+    );
     //const {comments} = response.body.data;
     console.log(response.status);
-    console.log("THE RETRIEVE COMMENTS FOR CHIRP RESPONSE BODY",  response.body);
+    console.log("THE RETRIEVE COMMENTS FOR CHIRP RESPONSE BODY", response.body);
     //expect().toBeGreaterThan(0);
     done();
-  })
+  });
 });
