@@ -13,6 +13,7 @@ const authorizeUser = async (req, res) => {
     // Mutating req.body to facilitate providing the necessary data for Chirp creation.
     req.body.user = user._id;
     req.body.username = user.username;
+    req.body.email = user.email;
   }
 };
 

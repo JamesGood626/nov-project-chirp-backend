@@ -5,6 +5,7 @@ const applyMiddleware = require("./middleware");
 const userRoutes = require("./api/User/routes/userRoutes");
 const chirpRoutes = require("./api/Chirp/routes/chirpRoutes");
 const reactionRoutes = require("./api/Reaction/routes/reactionRoutes");
+const commentRoutes = require("./api/Comment/routes/commentRoutes");
 const { UNPROCESSABLE_ENTITY } = require("./api/StatusCodeConstants");
 
 if (process.env.NODE_ENV === "test" || process.env.NODE_ENV === "development") {
@@ -31,5 +32,5 @@ app.use("/user", userRoutes);
 app.use(verifyJwt);
 app.use("/chirp", chirpRoutes);
 app.use("/chirp/reaction/", reactionRoutes);
-
+app.use("/chirp/comment/", commentRoutes);
 module.exports = app;

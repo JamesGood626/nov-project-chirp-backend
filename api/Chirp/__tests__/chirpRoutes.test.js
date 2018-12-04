@@ -118,6 +118,7 @@ describe("Hitting the chirpRoutes, a User may", () => {
       "/chirp",
       token
     );
+    
     const parsed = parseJson(response.text);
     expect(parsed.length).toBe(2);
     done();
