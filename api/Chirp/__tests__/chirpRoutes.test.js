@@ -7,6 +7,7 @@ const {
   getRequest,
   getRequestWithHeaders,
   postRequestWithHeaders,
+  putRequestWithHeaders,
   dropCollection,
   parseJson
 } = require("../../testHelpers");
@@ -122,19 +123,24 @@ describe("Hitting the chirpRoutes, a User may", () => {
     done();
   });
 
-  // test("user can get delete a chirp", async done => {
-  //   const createdChirpResponse = await postRequest(
-  //     createdRequest,
-  //     "/chirp/delete",
-  //     chirpInput
-  //   );
-  //   console.log(
-  //     "created chirp resposne in delete chirp test: ",
-  //     createdChirpResponse.body
-  //   );
-  //   // const { _id } = createdChirpResponse.body.data.chirp;
-  //   // const response = await putRequest(createdRequest, `/chirp/delete/${_id}`);
-  //   // expect(response.statusCode).toBe(NO_CONTENT);
-  //   done();
-  // });
+  test("user can get delete a chirp", async done => {
+    const createdChirpResponse = await postRequestWithHeaders(
+      createdRequest,
+      "/chirp",
+      token,
+      chirpInput
+    );
+    console.log(
+      "created chirp resposne in delete chirp test: ",
+      createdChirpResponse.body
+    );
+    const { uuid } = createdChirpResponse.body.data.chirp;
+    const response = await putRequestWithHeaders(
+      createdRequest,
+      `/chirp/delete/${uuid}`,
+      token
+    );
+    expect(response.statusCode).toBe(NO_CONTENT);
+    done();
+  });
 });
