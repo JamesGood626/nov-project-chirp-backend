@@ -15,6 +15,7 @@ const ChirpSchema = new Schema({
     type: String,
     required: true
   },
+  email: String,
   user: {
     type: Schema.Types.ObjectId,
     ref: "User",
