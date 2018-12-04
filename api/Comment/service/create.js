@@ -19,6 +19,9 @@ const createCommentIfAuthorized = async (req, res) => {
     return;
   }
   await authorizeUser(req, res);
+  //req.body.chirpUuid = req.params.chirpId;
+  req.body.userUuid = req.user.userUuid;
+  //req.body.username = req.body.username;
   // create comment
   const [err, createdCommentData] = await to(createCommentCatch(req.body));
   if (err) {
@@ -37,7 +40,10 @@ const createCommentCatch = data => {
     }
     const payload = {
       data: {
-        comment: comment
+        comment: comment.comment,
+        createdAt: comment.created_at,
+        username: comment.username,
+        chirpId:comment.chirpUuid
       }
     };
     resolve(payload);

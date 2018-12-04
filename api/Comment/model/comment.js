@@ -9,6 +9,7 @@ const CommentSchema = new Schema({
         required: true
       },
     comment:String,
+    username: String,
     chirpUuid: {
         type: String,
         required: true

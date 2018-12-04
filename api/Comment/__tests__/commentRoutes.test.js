@@ -62,19 +62,20 @@ describe("Testing comment routes", () => {
   });
 
   test("comment should get created", async done => {
+    console.log("CHIRP UUID "+chirpUuid);
     const response = await postRequestWithHeaders(
       createdRequest,
       `/chirp/comment/`,
       token,
       {
           chirpUuid:chirpUuid,
-          comment: "some words"
+          comment: "some more words"
       }
     );
     console.log(response.status);
     console.log(response.body)
     const { comment } = response.body.data;
-    expect(comment).toBe(1);
+    expect(comment).toBe("some more words");
     done();
   });
 });
